@@ -1,0 +1,41 @@
+#!/bin/bash
+# up: Move back up a specified number of directories. Optionally, a directory can be specified known
+# to be at the desired end directory to be moved into as well.
+#
+# To leverage, the script, place the _up script in a directory within your PATH, and then
+# create an alias in the following format:
+#
+#   alias up=". _up"
+#
+# usage: up [number_of_levels] [end_directory]
+
+# Argument validation.
+# Two arguments, we assume a number of levels to move up and a directory infix to move into.
+if [[ $# -ge 2 ]]; then
+    _UP_LEVELS="$1"
+    _UP_DIR="$2"
+    
+    # One argument: check if it's a number or a directory infix.
+    # If it's an explicit number, we have to unfortunately assume it's a number of levels, not a directory infix.
+elif [[ $1 =~ ^[0-9]+$ ]]; then
+    _UP_LEVELS="$1"
+    _UP_DIR=""
+elif [[ $# -eq 1 ]]; then
+    _UP_LEVELS="1"
+    _UP_DIR="$1"
+else
+  _UP_LEVELS="1"
+  _UP_DIR=""
+fi
+
+# Generate a "..", _UP_LEVELS repetitions long.
+_UP_MOVE=""
+for n in $(seq 1 $_UP_LEVELS); do _UP_MOVE=$_UP_MOVE"../"; done
+
+# Move.
+cd $_UP_MOVE$_UP_DIR
+
+# Cleanup.
+unset _UP_MOVE
+unset _UP_LEVELS
+unset _UP_DIR
